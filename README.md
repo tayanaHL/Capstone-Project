@@ -28,12 +28,25 @@ As a user, I want to be able to securely log out of the app so that I can protec
 
 
 ## Wireframes
+![Palmolive Bank Diagram](PB1.png "Palmolive Bank")
+![Palmolive Bank Diagram](PB2.png "Palmolive Bank")
+![Palmolive Bank Diagram](PB3.png "Palmolive Bank")
+![Palmolive Bank Diagram](PB4.png "Palmolive Bank")
+![Palmolive Bank Diagram](PB5.png "Palmolive Bank")
+![Palmolive Bank Diagram](PB6.png "Palmolive Bank")
+![Palmolive Bank Diagram](PB7.png "Palmolive Bank")
+![Palmolive Bank Diagram](PB8.png "Palmolive Bank")
+![Palmolive Bank Diagram](PB9.png "Palmolive Bank")
+![Palmolive Bank Diagram](PB10.png "Palmolive Bank")
+![Palmolive Bank Diagram](PB11.png "Palmolive Bank")
+![Palmolive Bank Diagram](PB12.png "Palmolive Bank")
+![Palmolive Bank Diagram](PB13.png "Palmolive Bank")
 
 ## Tech Stack
-HTML5
-CSS
-Javascript
-React 
-Django
-Python
-SQL
+- HTML5
+- CSS
+- Javascript
+- React 
+- Django
+- Python
+- SQL

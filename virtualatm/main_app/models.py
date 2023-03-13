@@ -1,5 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.contrib.auth.models import User
+from django.conf import settings
+import random
+import string
 
 # Create your models here.
 
@@ -32,3 +38,16 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+class Card(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    number = models.CharField(max_length=16, unique=True)
+
+    @receiver(post_save, sender=User)
+    def create_card(sender, instance, created, **kwargs):
+        from .models import Card
+        if created:
+            # Generate a random 16-digit number for the card
+            card_number = ''.join(random.choices(string.digits, k=16))
+            # Create a new Card instance for the user with the generated card number
+            Card.objects.create(user=instance, number=card_number)

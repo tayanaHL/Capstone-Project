@@ -19,6 +19,7 @@ from main_app.views import signup, signin
 
 
 urlpatterns = [
+    path('', signup, name='home'),
     path('admin/', admin.site.urls),
     path('signup/', signup, name='signup'),
     path('signin/', signin, name='signin'),

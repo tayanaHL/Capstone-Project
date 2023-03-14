@@ -1,0 +1,13 @@
+{% extends 'main_app/base.html' %}
+
+{% block content %}
+<h3> You currently have a balance of {{ savings_account.balance }}</h3>
+<div class="row">
+    <div class="col s6">
+      <a href="{% url 'savings' savings_account.id %}" class="waves-effect waves-light btn">Go Back</a>
+    </div>
+    <div class="col s6">
+      <a href="{% url 'savings_transaction' savings_account.id %}" class="waves-effect waves-light btn">Transactions</a>
+    </div>
+  </div>
+{% endblock %}

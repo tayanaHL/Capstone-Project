@@ -1,6 +1,17 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>Hello, {{ name }}!</h1>
-  <p>Welcome to your savings account.</p>
+<h3>Savings Account</h3>
+<p>Account Number: {{ savings_account.account_number }}</p>
+<p>Account Type: {{ savings_account.account_type }}</p>
+<p>Balance: {{ savings_account.balance }}</p>
+
+<div class="row">
+  <div class="col s6">
+    <a href="{% url 'savings_balance' savings_account.id %}" class="waves-effect waves-light btn">Balance</a>
+  </div>
+  <div class="col s6">
+    <a href="{% url 'savings_transaction' savings_account.id %}" class="waves-effect waves-light btn">Transactions</a>
+  </div>
+</div>
 {% endblock %}

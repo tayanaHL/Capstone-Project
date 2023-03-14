@@ -3,4 +3,18 @@
 {% block content %}
   <h1>Hello, {{ name }}!</h1>
   <p>Welcome to Palmolive Bank. What can I help you with today?</p>
+
+  <div class="container">
+    <div class="row">
+      <div class="col s6">
+        <a href="{% url 'checking' %}" class="waves-effect waves-light btn-large">Checking</a>
+      </div>
+      <div class="col s6">
+        <a href="{% url 'savings' %}" class="waves-effect waves-light btn-large">Savings</a>
+      </div>
+      <div class="col s6">
+        <a href="{% url 'transaction_history' %}" class="waves-effect waves-light btn-large">Transaction History</a>
+      </div>
+    </div>
+  </div>
 {% endblock %}

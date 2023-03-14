@@ -1,7 +1,8 @@
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .models import CustomUser, CheckingAccount, SavingsAccount
+from .models_customs import CustomUser
+from .models import CheckingAccount, SavingsAccount
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
 
 # Create your views here.

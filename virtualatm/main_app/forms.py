@@ -10,7 +10,6 @@ class CustomUserCreationForm(UserCreationForm):
         fields = ['email', 'password1', 'password2']
 
 class CustomAuthenticationForm(AuthenticationForm):
-    username = None
     email = forms.EmailField(widget=forms.TextInput(attrs={'autofocus': True}))
 
     class Meta:

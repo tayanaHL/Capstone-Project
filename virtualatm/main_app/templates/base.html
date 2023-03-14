@@ -20,11 +20,13 @@
       </div>
     </nav>
     
-    <!-- Content
+    <!-- Content -->
+    {% block signin_form %}
     <div class="container">
       {% block content %}
       {% endblock %}
-    </div> -->
+    </div>
+    {% endblock %}
 
     <!-- Sign-up and Sign-in Buttons -->
     <div class="container">
@@ -33,7 +35,7 @@
           <a href="{% url 'signup' %}" class="waves-effect waves-light btn-large">Sign up</a>
         </div>
         <div class="col s6">
-          <a href="{% url 'signin' %}" class="waves-effect waves-light btn-large">Log in</a>
+          <a href="{% url 'signin' %}" class="waves-effect waves-light btn-large">Sign in</a>
         </div>
       </div>
     </div>

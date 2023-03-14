@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from main_app.views import signup, signin
+from main_app.views import signup, signin, welcome, checking, savings
 
 
 urlpatterns = [
@@ -23,5 +23,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('signup/', signup, name='signup'),
     path('signin/', signin, name='signin'),
+     path('welcome/', welcome, name='welcome'),
+      path('checking/', checking, name='checking'),
+    path('savings/', savings, name='savings'),
     #  path('', include('virtualatm.urls')),
 ]

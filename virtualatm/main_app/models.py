@@ -5,6 +5,7 @@ from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.utils import timezone
+from .models import CustomUser, CheckingAccount, SavingsAccount
 import random
 import string
 
@@ -59,3 +60,15 @@ class Card(models.Model):
             card_number = ''.join(random.choices(string.digits, k=16))
             # Create a new Card instance for the user with the generated card number
             Card.objects.create(user=instance, number=card_number)
+
+
+class CheckingAccount(models.Model):
+    account_number = models.CharField(max_length=10)
+    balance = models.DecimalField(max_digits=10, decimal_places=2)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+class SavingsAccount(models.Model):
+    account_number = models.CharField(max_length=10)
+    balance = models.DecimalField(max_digits=10, decimal_places=2)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+

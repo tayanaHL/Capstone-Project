@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
   <head>
@@ -5,27 +6,24 @@
     <!-- Import Materialize CSS -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}"
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   </head>
   <body>
     <!-- Navigation Bar -->
     <nav>
       <div class="nav-wrapper">
-        <a href="/" class="brand-logo">Palmolive Bank/a>
-        <ul id="nav-mobile" class="right hide-on-med-and-down">
-          <!-- <li><a href="{% url 'signup' %}">Sign up</a></li>
-          <li><a href="{% url 'signin' %}">Sign in</a></li> -->
-        </ul>
+        <a href="/" class="brand-logo">Virtual ATM</a>
       </div>
     </nav>
     <h1>Welcome to Palmolive Bank</h1>
     <!-- Content -->
-    {% block signin_form %}
+    <!-- {% block signin_form %}
     <div class="container">
       {% block content %}
       {% endblock %}
     </div>
-    {% endblock %}
+    {% endblock %} -->
 
     <!-- Sign-up and Sign-in Buttons -->
     <div class="container">
@@ -38,6 +36,12 @@
         </div>
       </div>
     </div>
-    
+    <main class="container">
+        {% block content %}
+        {% endblock %}
+      </main>
+      <footer class="page-footer">
+        <div class="right">All right reserved, &copy; 2023 Palmolive Bank & </div>
+      </footer>  
   </body>
 </html>

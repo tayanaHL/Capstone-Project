@@ -6,6 +6,10 @@ from .models import CheckingAccount, SavingsAccount
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
 
 # Create your views here.
+
+def home(request):
+    return render(request, 'home.html')
+    
 def signup(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)

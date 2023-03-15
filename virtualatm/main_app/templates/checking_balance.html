@@ -1,6 +1,6 @@
 {% extends 'main_app/base.html' %}
 
-{% block content %}
+
 <h3>Balance: You currently have a balance of {{ checking_account.balance }}</h3>
 <div class="row">
     <div class="col s6">
@@ -10,4 +10,3 @@
       <a href="{% url 'checking_transaction' checking_account.id %}" class="waves-effect waves-light btn">Transactions</a>
     </div>
   </div>
-{% endblock %}

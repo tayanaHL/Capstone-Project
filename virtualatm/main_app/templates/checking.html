@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block content %}
+
   <h3>Checking Account</h3>
   <p>Account Number: {{ checking_account.account_number }}</p>
   <p>Account Type: {{ checking_account.account_type }}</p>
@@ -14,4 +14,3 @@
       <a href="{% url 'checking_transaction' checking_account.id %}" class="waves-effect waves-light btn">Transactions</a>
     </div>
   </div>
-{% endblock %}

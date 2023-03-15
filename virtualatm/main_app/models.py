@@ -76,15 +76,15 @@ class SavingsAccount(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
 
-# class Transaction(models.Model):
-#     user = models.ForeignKey(
-#         settings.AUTH_USER_MODEL,
-#         on_delete=models.CASCADE,
-#         related_name='transactions'
-#     )
-#     transaction_type = models.CharField(max_length=50)
-#     amount = models.DecimalField(max_digits=19, decimal_places=2)
-#     timestamp = models.DateTimeField(auto_now_add=True)
+class Transaction(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='transactions'
+    )
+    transaction_type = models.CharField(max_length=50)
+    amount = models.DecimalField(max_digits=19, decimal_places=2)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
 
 class CheckingBalance(models.Model):
@@ -104,9 +104,7 @@ class CheckingDeposit(models.Model):
 
    
 class SavingsDeposit(models.Model):
-    account = models.ForeignKey(User, on_delete=models.CASCADE)
-    date = models.DateField(auto_now_add=True)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    account = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
 
 class CheckingWithdrawal(models.Model):
@@ -117,28 +115,19 @@ class CheckingWithdrawal(models.Model):
    
 
 class CheckingTransaction(models.Model):
-    account = models.ForeignKey(User, on_delete=models.CASCADE)
-    date = models.DateTimeField(auto_now_add=True)
-    description = models.CharField(max_length=100)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    account = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
 class CheckingTransfer(models.Model):
-    from_account = models.ForeignKey(User, on_delete=models.CASCADE, related_name='from_account')
-    to_account = models.ForeignKey(User, on_delete=models.CASCADE, related_name='to_account')
-    date = models.DateTimeField(auto_now_add=True)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    from_account = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='checking_transfers_sent')
+    to_account = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='checking_transfers_received')
+amount = models.DecimalField(max_digits=10, decimal_places=2)
 
 class SavingsTransaction(models.Model):
-    account = models.ForeignKey(User, on_delete=models.CASCADE)
-    date = models.DateTimeField(auto_now_add=True)
-    description = models.CharField(max_length=100)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    account = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
 class SavingsTransfer(models.Model):
-    from_account = models.ForeignKey(User, on_delete=models.CASCADE, related_name='from_account')
-    to_account = models.ForeignKey(User, on_delete=models.CASCADE, related_name='to_account')
-    date = models.DateTimeField(auto_now_add=True)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    from_account = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='savings_transfers_sent')
+    to_account = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='savings_transfers_received')
 
 
 class SavingsWithdrawal(models.Model):

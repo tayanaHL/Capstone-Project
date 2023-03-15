@@ -3,11 +3,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models_customs import CustomUser
-from .models import CheckingAccount, SavingsAccount, CheckingTransaction, TransactionSavingsDeposit, SavingsTransaction, SavingsTransfer, CheckingTransfer, Transaction
+from .models import CheckingAccount, SavingsAccount, CheckingTransaction, SavingsTransaction, SavingsTransfer, CheckingTransfer, Transaction
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
-from .forms import CheckingDepositForm, CheckingWithdrawalForm
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import TemplateView, View, Q
+from django.views.generic import TemplateView, View
 
 
 # Create your views here.

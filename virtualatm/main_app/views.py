@@ -43,13 +43,12 @@ def signin(request):
 @login_required
 def welcome(request):
     # Get the name of the logged-in user
-    name = request.user.email
-
+    first_name = request.user.first_name
     from .models import CustomUser
     user = CustomUser.objects.get(email=request.user.email)
 
     # Render the welcome template with the user's name
-    return render(request, 'welcome.html', {'name': name, 'user': user})
+    return render(request, 'welcome.html', {'first_name': first_name})
 
 @login_required
 def checking(request):

@@ -14,12 +14,15 @@ def signup(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save(commit=False)
+            user.first_name = form.cleaned_data.get('first_name')
+            user.last_name = form.cleaned_data.get('last_name')
+            user.save()
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password1')
             user = authenticate(request, email=email, password=password)
             login(request, user)
-            return redirect('home')
+            return redirect('welcome')
     else:
         form = CustomUserCreationForm()
     return render(request, 'signup.html', {'form': form})
@@ -28,11 +31,11 @@ def signin(request):
     if request.method == 'POST':
         form = CustomAuthenticationForm(request, request.POST)
         if form.is_valid():
-            email = form.cleaned_data.get('username')
+            email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
             user = authenticate(request, email=email, password=password)
             login(request, user)
-            return redirect('home')
+            return redirect('welcome')
     else:
         form = CustomAuthenticationForm()
     return render(request, 'signin.html', {'form': form})
@@ -40,7 +43,7 @@ def signin(request):
 @login_required
 def welcome(request):
     # Get the name of the logged-in user
-    name = request.user.username
+    name = request.user.email
 
     from .models import CustomUser
     user = CustomUser.objects.get(email=request.user.email)

@@ -85,3 +85,48 @@ class Transaction(models.Model):
     transaction_type = models.CharField(max_length=50)
     amount = models.DecimalField(max_digits=19, decimal_places=2)
     timestamp = models.DateTimeField(auto_now_add=True)
+
+
+class CheckingBalance(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+
+    def __str__(self):
+        return f"{self.user.username}'s Checking Balance"
+    
+
+class CheckingDeposit(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username}'s Checking Deposit"
+
+
+class CheckingWithdrawal(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username}'s Checking Withdrawal"
+
+class Transaction(models.Model):
+    sender = models.ForeignKey(CustomUser, related_name='sender', on_delete=models.CASCADE)
+    receiver = models.ForeignKey(CustomUser, related_name='receiver', on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.sender} sent {self.receiver} ${self.amount} on {self.date}"
+
+
+class CheckingAccount(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    balance = models.DecimalField(max_digits=10, decimal_places=2)
+
+class SavingsAccount(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    balance = models.DecimalField(max_digits=10, decimal_places=2)
+

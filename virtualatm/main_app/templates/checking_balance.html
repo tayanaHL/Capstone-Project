@@ -1,12 +1,31 @@
-{% extends 'main_app/base.html' %}
-
-
-<h3>Balance: You currently have a balance of {{ checking_account.balance }}</h3>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}"
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <title>Document</title>
+</head>
+<body>
+<h1>Checking Account</h1>
+<h2>Balance</h2>
+<h3>You currently have a balance of {{ checking_account.balance }}</h3>
 <div class="row">
     <div class="col s6">
-      <a href="{% url 'checking' checking_account.id %}" class="waves-effect waves-light btn">Go Back</a>
+      <a href="{% url 'welcome' %}" class="waves-effect waves-light btn">Go Back</a>
     </div>
     <div class="col s6">
       <a href="{% url 'checking_transaction' checking_account.id %}" class="waves-effect waves-light btn">Transactions</a>
     </div>
   </div>
+
+{% endblock %}
+</html>
+
+
+

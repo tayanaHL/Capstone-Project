@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}"
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <title>Document</title>
+</head>
+<body>
+<h1>Savings Account</h1>
+<h2>Withdrawal</h2>
+<h3>You currently have a balance of {{ savings_account.balance }}</h3>
+<p> How much would you like withdraw from your savings account?</p>
+<div class="row">
+    <div class="col s6">
+        <a href="{% url 'confirmation' %}" class="waves-effect waves-light btn">$20</a>
+      </div>
+      <div class="col s6">
+        <a href="{% url 'confirmation' %}" class="waves-effect waves-light btn">$40</a>
+      </div>
+      <div class="col s6">
+        <a href="{% url 'confirmation' %}" class="waves-effect waves-light btn">$60</a>
+      </div>
+    <div class="col s6">
+        <a href="{% url 'confirmation' %}" class="waves-effect waves-light btn">$80</a>
+      </div>
+      <div class="col s6">
+        <a href="{% url 'confirmation' %}" class="waves-effect waves-light btn">$100/a>
+      </div>
+    <div class="col s6">
+      <a href="{% url 'other_amount' %}" class="waves-effect waves-light btn">Other</a>
+    </div>
+  </div>
+  <div class="col s6">
+    <a href="{% url 'savings_transaction' %}" class="waves-effect waves-light btn">Go Back</a>
+  </div>
+</html>
+
+
+

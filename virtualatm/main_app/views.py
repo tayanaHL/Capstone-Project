@@ -1,9 +1,9 @@
 from django.contrib.auth import authenticate, login
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models_customs import CustomUser
-from .models import CheckingAccount, SavingsAccount,  CheckingTransaction, Transaction
+from .models import CheckingAccount, SavingsAccount, CheckingTransaction, TransactionSavingsDeposit, SavingsTransaction, SavingsTransfer, CheckingTransfer, Transaction
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
 from .forms import CheckingDepositForm, CheckingWithdrawalForm
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -85,116 +85,154 @@ class CheckingBalanceView(LoginRequiredMixin, TemplateView):
         except CheckingAccount.DoesNotExist:
             context['balance'] = 0
         return context
-    
-def checking_deposit(request):
-    user = request.user
-    account = CheckingAccount.objects.get(user=user)
-    
+
+@login_required
+def savings_transaction(request):
+    transactions = SavingsTransaction.objects.filter(account=request.user)
+    return render(request, 'savings_transaction.html', {'transactions': transactions})
+
+@login_required
+def checking_transaction(request):
+    transactions = CheckingTransaction.objects.filter(account=request.user)
+    return render(request, 'checking_transaction.html', {'transactions': transactions})
+
+@login_required
+def savings_deposits(request):
+    deposits = SavingsAccount.objects.filter(account=request.user)
+    return render(request, 'savings_deposits.html', {'deposits': deposits})
+
+@login_required
+def checking_deposits(request):
+    deposits = SavingsAccount.objects.filter(account=request.user)
+    return render(request, 'checking_deposits.html', {'deposits': deposits})
+
+@login_required
+def savings_transfers(request):
     if request.method == 'POST':
-        form = CheckingDepositForm(request.POST)
-        if form.is_valid():
-            amount = form.cleaned_data['amount']
-            transaction = CheckingTransaction.objects.create(
-                account=account,
-                transaction_type='D',
+        action = request.POST['action']
+        from_account = SavingsAccount.objects.get(user=request.user)
+        if action == 'transfer':
+            to_account_id = request.POST['to_account']
+            to_account = CheckingAccount.objects.get(id=to_account_id)
+        else:
+            to_account = from_account
+        amount = request.POST.get('amount', None)
+        custom_amount = request.POST.get('custom_amount', None)
+        if amount == 'other_amount':
+            amount = custom_amount
+        if amount:
+            amount = float(amount)
+            if action == 'withdrawal':
+                amount = -amount
+            if from_account.balance + amount < 0:
+                return render(request, 'savings_transfers.html', {'error': 'Insufficient funds.'})
+            from_account.balance -= amount
+            from_account.save()
+            to_account.balance += amount
+            to_account.save()
+            Transaction.objects.create(
+                from_account=from_account,
+                to_account=to_account,
                 amount=amount,
             )
-            account.balance += amount
-            account.save()
-            messages.success(request, f'Deposit of {amount} was successful!')
-            return redirect('checking_balance')
+            return redirect('confirmation')
     else:
-        form = CheckingDepositForm()
-
-    context = {
-        'form': form,
-        'account': account,
-    }
-    return render(request, 'main_app/checking_deposit.html', context)
-
-def checking_withdrawal(request):
-    user = request.user
-    account = CheckingAccount.objects.get(user=user)
-    
-    if request.method == 'POST':
-        form = CheckingWithdrawalForm(request.POST)
-        if form.is_valid():
-            amount = form.cleaned_data['amount']
-            if account.balance < amount:
-                messages.warning(request, 'Insufficient balance to make withdrawal')
-            else:
-                transaction = CheckingTransaction.objects.create(
-                    account=account,
-                    transaction_type='W',
-                    amount=amount,
-                )
-                account.balance -= amount
-                account.save()
-                messages.success(request, f'Withdrawal of {amount} was successful!')
-                return redirect('checking_balance')
-    else:
-        form = CheckingWithdrawalForm()
-
-    context = {
-        'form': form,
-        'account': account,
-    }
-    return render(request, 'main_app/checking_withdrawal.html', context)
+        return render(request, 'savings_transfers.html')
 
 @login_required
 def checking_transfers(request):
     if request.method == 'POST':
-        sender = CheckingAccount.objects.get(user=request.user)
-        receiver = SavingsAccount.objects.get(user=request.user)
-        amount = float(request.POST['amount'])
-        
-        if sender.balance >= amount and amount > 0:
-            sender.balance -= amount
-            receiver.balance += amount
-            sender.save()
-            receiver.save()
-            
+        action = request.POST['action']
+        from_account = CheckingAccount.objects.get(user=request.user)
+        if action == 'transfer':
+            to_account_id = request.POST['to_account']
+            to_account = SavingsAccount.objects.get(id=to_account_id)
+        else:
+            to_account = from_account
+        amount = request.POST.get('amount', None)
+        custom_amount = request.POST.get('custom_amount', None)
+        if amount == 'other_amount':
+            amount = custom_amount
+        if amount:
+            amount = float(amount)
+            if action == 'withdrawal':
+                amount = -amount
+            if from_account.balance + amount < 0:
+                return render(request, 'checking_transfers.html', {'error': 'Insufficient funds.'})
+            from_account.balance -= amount
+            from_account.save()
+            to_account.balance += amount
+            to_account.save()
             Transaction.objects.create(
-                sender=sender,
-                receiver=receiver,
+                from_account=from_account,
+                to_account=to_account,
                 amount=amount,
             )
-            
-            context = {
-                'success_message': f'You have transferred ${amount:.2f} from your checking account to your savings account.',
-            }
-        else:
-            context = {
-                'error_message': 'Invalid transfer amount.',
-            }
-        
-        return render(request, 'main_app/checking_transfers.html', context)
+            return redirect('confirmation')
     else:
-        return render(request, 'main_app/checking_transfers.html')
+        return render(request, 'checking_transfers.html')
+
+@login_required
+def savings_withdrawal(request):
+    savings_account = SavingsAccount.objects.get(account=request.user)
+    if request.method == 'POST':
+        amount = float(request.POST.get('amount'))
+        if amount <= savings_account.balance:
+            savings_account.balance -= amount
+            savings_account.save()
+            Transaction.objects.create(account=savings_account, description='Withdrawal', amount=amount)
+            return redirect('savings_transaction')
+        else:
+            error_message = 'Insufficient funds'
+    else:
+        error_message = None
+    return render(request, 'savings_withdrawal.html', {'savings_account': savings_account, 'error_message': error_message})
 
 @login_required
 def checking_withdrawal(request):
+    checking_account = CheckingAccount.objects.get(account=request.user)
     if request.method == 'POST':
-        checking_account = CheckingAccount.objects.get(user=request.user)
-        amount = float(request.POST['amount'])
-        
-        if checking_account.balance >= amount and amount > 0:
+        amount = float(request.POST.get('amount'))
+        if amount <= checking_account.balance:
             checking_account.balance -= amount
             checking_account.save()
-            
-            Transaction.objects.create(
-                checking_account=checking_account,
-                amount=amount,
-            )
-            
-            context = {
-                'success_message': f'You have withdrawn ${amount:.2f} from your checking account.',
-            }
+            Transaction.objects.create(account=checking_account, description='Withdrawal', amount=amount)
+            return redirect('checking_transaction')
         else:
-            context = {
-                'error_message': 'Invalid withdrawal amount.',
-            }
-        
-        return render(request, 'main_app/checking_withdrawal.html', context)
+            error_message = 'Insufficient funds'
     else:
-        return render(request, 'main_app/checking_withdrawal.html')
+        error_message = None
+    return render(request, 'checking_withdrawal.html', {'checking_account': checking_account, 'error_message': error_message})
+
+def transaction_history(request):
+    checking_account = CheckingAccount.objects.get(user=request.user)
+    savings_account = SavingsAccount.objects.get(user=request.user)
+    checking_transactions = Transaction.objects.filter(
+        from_account=checking_account) | Transaction.objects.filter(to_account=checking_account)
+    savings_transactions = Transaction.objects.filter(
+        from_account=savings_account) | Transaction.objects.filter(to_account=savings_account)
+    all_transactions = checking_transactions | savings_transactions
+    context = {
+        'checking_transactions': checking_transactions,
+        'savings_transactions': savings_transactions,
+        'all_transactions': all_transactions,
+    }
+    return render(request, 'transaction_history.html', context)
+
+
+def delete_transaction(request, transaction_id):
+    transaction = get_object_or_404(Transaction, id=transaction_id)
+    if request.method == 'GET':
+        # Render a confirmation page asking the user if they want to delete the transaction
+        context = {'transaction': transaction}
+        return render(request, 'delete_transaction_confirm.html', context)
+    elif request.method == 'POST':
+        # Delete the transaction and update the account balance accordingly
+        if transaction.from_account:
+            transaction.from_account.balance += transaction.amount
+            transaction.from_account.save()
+        if transaction.to_account:
+            transaction.to_account.balance -= transaction.amount
+            transaction.to_account.save()
+        transaction.delete()
+        return redirect('transaction_history')

@@ -76,32 +76,37 @@ class SavingsAccount(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
 
-class Transaction(models.Model):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name='transactions'
-    )
-    transaction_type = models.CharField(max_length=50)
-    amount = models.DecimalField(max_digits=19, decimal_places=2)
-    timestamp = models.DateTimeField(auto_now_add=True)
+# class Transaction(models.Model):
+#     user = models.ForeignKey(
+#         settings.AUTH_USER_MODEL,
+#         on_delete=models.CASCADE,
+#         related_name='transactions'
+#     )
+#     transaction_type = models.CharField(max_length=50)
+#     amount = models.DecimalField(max_digits=19, decimal_places=2)
+#     timestamp = models.DateTimeField(auto_now_add=True)
 
 
 class CheckingBalance(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 
-    def __str__(self):
-        return f"{self.user.username}'s Checking Balance"
     
+class SavingsBalance(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+
 
 class CheckingDeposit(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     date = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return f"{self.user.username}'s Checking Deposit"
+   
+class SavingsDeposit(models.Model):
+    account = models.ForeignKey(User, on_delete=models.CASCADE)
+    date = models.DateField(auto_now_add=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
 
 
 class CheckingWithdrawal(models.Model):
@@ -109,24 +114,36 @@ class CheckingWithdrawal(models.Model):
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     date = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return f"{self.user.username}'s Checking Withdrawal"
+   
 
-class Transaction(models.Model):
-    sender = models.ForeignKey(CustomUser, related_name='sender', on_delete=models.CASCADE)
-    receiver = models.ForeignKey(CustomUser, related_name='receiver', on_delete=models.CASCADE)
+class CheckingTransaction(models.Model):
+    account = models.ForeignKey(User, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True)
+    description = models.CharField(max_length=100)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+class CheckingTransfer(models.Model):
+    from_account = models.ForeignKey(User, on_delete=models.CASCADE, related_name='from_account')
+    to_account = models.ForeignKey(User, on_delete=models.CASCADE, related_name='to_account')
+    date = models.DateTimeField(auto_now_add=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+class SavingsTransaction(models.Model):
+    account = models.ForeignKey(User, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True)
+    description = models.CharField(max_length=100)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+class SavingsTransfer(models.Model):
+    from_account = models.ForeignKey(User, on_delete=models.CASCADE, related_name='from_account')
+    to_account = models.ForeignKey(User, on_delete=models.CASCADE, related_name='to_account')
+    date = models.DateTimeField(auto_now_add=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+class SavingsWithdrawal(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
     date = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return f"{self.sender} sent {self.receiver} ${self.amount} on {self.date}"
-
-
-class CheckingAccount(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    balance = models.DecimalField(max_digits=10, decimal_places=2)
-
-class SavingsAccount(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    balance = models.DecimalField(max_digits=10, decimal_places=2)
-
+    

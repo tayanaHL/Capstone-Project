@@ -21,12 +21,10 @@ from main_app.views import home, signup, signin, welcome, checking, savings
 
 urlpatterns = [
     path('', home, name='home'),
-     path('logout/', LogoutView.as_view(), name='logout'),
+    path('logout/', LogoutView.as_view(), name='logout'),
     path('admin/', admin.site.urls),
     path('signup/', signup, name='signup'),
     path('signin/', signin, name='signin'),
-     path('welcome/', welcome, name='welcome'),
-      path('checking/', checking, name='checking'),
-    path('savings/', savings, name='savings'),
-    #  path('', include('virtualatm.urls')),
+    path('welcome/', welcome, name='welcome'),
+    path('', include('main_app.urls')),
 ]

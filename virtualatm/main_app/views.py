@@ -58,10 +58,10 @@ def welcome(request):
 def checking(request):
     # Get the checking account for the logged-in user
     user = CustomUser.objects.get(email=request.user.email)
-    checking_account = CheckingAccount.objects.get(user=user)
+    checking_account = CheckingAccount.objects.filter(user=request.user)
 
     # Render the checking template with the user's checking account balance
-    return render(request, 'checking.html', {'balance': checking_account.balance})
+    return render(request, 'checking.html', {'balance': checking_account})
 
 @login_required
 def savings(request):
@@ -85,6 +85,19 @@ class CheckingBalanceView(LoginRequiredMixin, TemplateView):
             context['balance'] = 0
         return context
 
+class SavingsBalanceView(LoginRequiredMixin, TemplateView):
+    template_name = 'main_app/savings_balance.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        try:
+            savings_account = SavingsAccount.objects.get(user=user)
+            context['balance'] = savings_account.balance
+        except CheckingAccount.DoesNotExist:
+            context['balance'] = 0
+        return context
+
 @login_required
 def savings_transaction(request):
     transactions = SavingsTransaction.objects.filter(account=request.user)
@@ -102,7 +115,7 @@ def savings_deposits(request):
 
 @login_required
 def checking_deposits(request):
-    deposits = SavingsAccount.objects.filter(account=request.user)
+    deposits = CheckingAccount.objects.filter(account=request.user)
     return render(request, 'checking_deposits.html', {'deposits': deposits})
 
 @login_required

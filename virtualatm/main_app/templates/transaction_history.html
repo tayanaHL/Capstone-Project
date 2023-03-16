@@ -41,7 +41,7 @@
         {% for transaction in all_transactions %}
         <li>
             {{ transaction }}
-            <form method="POST" action="{% url 'delete_transaction' transaction.id %}">
+            <form method="POST" action="{% url 'confirm_delete_transaction' transaction.id %}">
                 {% csrf_token %}
                 <button type="submit">Delete</button>
             </form>

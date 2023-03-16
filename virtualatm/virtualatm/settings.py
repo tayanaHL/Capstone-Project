@@ -86,8 +86,8 @@ WSGI_APPLICATION = 'virtualatm.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'Capstone-Project',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'virtualatm',
     }
 }
 

@@ -5,8 +5,8 @@ from django.contrib.auth.decorators import login_required
 from .models_customs import CustomUser
 from .models import CheckingAccount, SavingsAccount, CheckingTransaction, SavingsTransaction, SavingsTransfer, CheckingTransfer, Transaction
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import TemplateView, View
+# from django.contrib.auth.mixins import LoginRequiredMixin
+# from django.views.generic import TemplateView, View
 
 
 # Create your views here.
@@ -67,36 +67,30 @@ def checking(request):
 def savings(request):
     # Get the savings account for the logged-in user
     user = CustomUser.objects.get(email=request.user.email)
-    savings_account = SavingsAccount.objects.get(user=user)
+    savings_account = SavingsAccount.objects.filter(user=request.user)
 
     # Render the savings template with the user's savings account balance
-    return render(request, 'savings.html', {'balance': savings_account.balance})
+    return render(request, 'savings.html', {'balance': savings_account})
 
-class CheckingBalanceView(LoginRequiredMixin, TemplateView):
-    template_name = 'main_app/checking_balance.html'
+@login_required
+def checking_balance(request):
+    user = request.user
+    try:
+        checking_account = CheckingAccount.objects.get(user=user)
+        balance = checking_account.balance
+    except CheckingAccount.DoesNotExist:
+        balance = 0
+    return render(request, 'checking_balance.html', {'balance': balance})
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user = self.request.user
-        try:
-            checking_account = CheckingAccount.objects.get(user=user)
-            context['balance'] = checking_account.balance
-        except CheckingAccount.DoesNotExist:
-            context['balance'] = 0
-        return context
-
-class SavingsBalanceView(LoginRequiredMixin, TemplateView):
-    template_name = 'main_app/savings_balance.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user = self.request.user
-        try:
-            savings_account = SavingsAccount.objects.get(user=user)
-            context['balance'] = savings_account.balance
-        except CheckingAccount.DoesNotExist:
-            context['balance'] = 0
-        return context
+def savings_balance(request):
+    user = request.user
+    try:
+        savings_account = SavingsAccount.objects.get(user=user)
+        balance = savings_account.balance
+    except SavingsAccount.DoesNotExist:
+        balance = 0
+    context = {'balance': balance}
+    return render(request, 'savings_balance.html', context)
 
 @login_required
 def savings_transaction(request):
